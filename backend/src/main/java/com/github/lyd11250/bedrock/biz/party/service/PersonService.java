@@ -35,6 +35,8 @@ public class PersonService {
 
     private final PartyMapper partyMapper;
     private final PartyPersonMapper personMapper;
+    private final AccountService accountService;
+    private final QualificationService qualificationService;
 
     public IPage<PersonVO> page(long current, long size, String keyword) {
         Page<Party> page = partyMapper.selectPage(Page.of(current, size),
@@ -95,6 +97,8 @@ public class PersonService {
     @Transactional
     public void delete(Long id) {
         requireParty(id);
+        accountService.deleteByParty(id);
+        qualificationService.deleteByParty(id);
         personMapper.deleteById(id);
         partyMapper.deleteById(id);
     }

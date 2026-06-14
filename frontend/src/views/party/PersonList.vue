@@ -52,6 +52,12 @@
           >
             删除
           </el-button>
+          <el-button v-permission="'party:account:list'" link type="warning" @click="openAccounts(row)">
+            账户
+          </el-button>
+          <el-button v-permission="'party:qualification:list'" link type="warning" @click="openQualifications(row)">
+            资质
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -105,6 +111,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import {
   createPerson,
@@ -114,6 +121,8 @@ import {
   type PersonItem,
 } from '@/api/party'
 import { formatDateTime } from '@/utils/time'
+
+const router = useRouter()
 
 const loading = ref(false)
 const list = ref<PersonItem[]>([])
@@ -212,7 +221,14 @@ async function handleDelete(row: PersonItem) {
   ElMessage.success('删除成功')
   await load()
 }
-</script>
+
+function openAccounts(row: PersonItem) {
+  router.push({ name: 'party-accounts', params: { partyId: row.id }, query: { partyName: row.name } })
+}
+
+function openQualifications(row: PersonItem) {
+  router.push({ name: 'party-qualifications', params: { partyId: row.id }, query: { partyName: row.name } })
+}</script>
 
 <style scoped>
 .toolbar {

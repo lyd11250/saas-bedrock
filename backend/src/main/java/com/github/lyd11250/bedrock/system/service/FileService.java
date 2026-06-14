@@ -18,9 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 文件上传下载（基座通用能力）。
@@ -127,6 +129,23 @@ public class FileService {
                 .map(SysFile::getBizType)
                 .map(v -> new FileBizTypeDef(v, bizTypeRegistry.labelOf(v)))
                 .toList();
+    }
+
+    /**
+     * 按 id 批量取文件元数据（不开流），供业务模块回填附件名/类型等展示信息。
+     *
+     * <p>业务模块（如 party 资质）经此方法关联自身记录的 {@code file_id}，而非直连 {@code SysFileMapper}
+     * （遵接入规范「不跨模块直连他人 mapper」）。读路径仍受多租户插件自动隔离。
+     *
+     * @return id → FileVO 映射；空集或 null 入参返回空 Map，不存在的 id 不出现在结果中
+     */
+    public Map<Long, FileVO> metaByIds(Collection<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Map.of();
+        }
+        return fileMapper.selectByIds(ids).stream()
+                .map(this::toVO)
+                .collect(Collectors.toMap(FileVO::getId, java.util.function.Function.identity()));
     }
 
     /** 软删元数据；物理对象保留，由后续定时任务按 object_key 清理。 */

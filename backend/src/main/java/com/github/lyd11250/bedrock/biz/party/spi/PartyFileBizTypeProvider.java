@@ -16,7 +16,9 @@ public class PartyFileBizTypeProvider implements FileBizTypeProvider {
     @Override
     public List<FileBizTypeDef> bizTypes() {
         return List.of(
-                new FileBizTypeDef("party:person:idcard", "人员身份证")
+                new FileBizTypeDef("party:person:idcard", "人员身份证"),
+                new FileBizTypeDef("party:organization:qualification", "单位资质证书"),
+                new FileBizTypeDef("party:person:qualification", "人员资质证书")
         );
     }
 }

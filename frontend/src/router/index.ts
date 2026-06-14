@@ -46,6 +46,18 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/profile/Profile.vue'),
         meta: { title: '个人中心' },
       },
+      {
+        path: 'party/accounts/:partyId',
+        name: 'party-accounts',
+        component: () => import('@/views/party/AccountList.vue'),
+        meta: { title: '账户管理' },
+      },
+      {
+        path: 'party/qualifications/:partyId',
+        name: 'party-qualifications',
+        component: () => import('@/views/party/QualificationList.vue'),
+        meta: { title: '资质管理' },
+      },
     ],
   },
   // 兜底：未匹配的路径。注意不能用 redirect 直跳 /error/404——

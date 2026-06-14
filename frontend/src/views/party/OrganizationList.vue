@@ -23,21 +23,21 @@
       :cell-style="{ textAlign: 'center' }"
       stripe
     >
-      <el-table-column prop="name" label="单位名称" min-width="160" />
-      <el-table-column prop="orgType" label="组织类型" width="120" />
-      <el-table-column prop="taxNo" label="统一社会信用代码" min-width="170" />
-      <el-table-column prop="legalPerson" label="法定代表人" width="110" />
-      <el-table-column label="成立日期" width="120">
+      <el-table-column prop="name" label="单位名称" />
+      <el-table-column prop="orgType" label="组织类型" />
+      <el-table-column prop="taxNo" label="统一社会信用代码" />
+      <el-table-column prop="legalPerson" label="法定代表人" />
+      <el-table-column label="成立日期">
         <template #default="{ row }">{{ row.establishedDate || '' }}</template>
       </el-table-column>
-      <el-table-column label="状态" width="80">
+      <el-table-column label="状态">
         <template #default="{ row }">
           <el-tag :type="row.status === 1 ? 'success' : 'info'">
             {{ row.status === 1 ? '启用' : '停用' }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="140">
+      <el-table-column label="操作">
         <template #default="{ row }">
           <el-button
             v-permission="'party:organization:update'"
@@ -54,6 +54,12 @@
             @click="handleDelete(row)"
           >
             删除
+          </el-button>
+          <el-button v-permission="'party:account:list'" link type="warning" @click="openAccounts(row)">
+            账户
+          </el-button>
+          <el-button v-permission="'party:qualification:list'" link type="warning" @click="openQualifications(row)">
+            资质
           </el-button>
         </template>
       </el-table-column>
@@ -74,7 +80,7 @@
     />
 
     <el-dialog v-model="dialogVisible" :title="editingId ? '编辑单位' : '新建单位'" width="560px">
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="单位名称" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
@@ -94,7 +100,10 @@
           <el-input v-model="form.legalPerson" />
         </el-form-item>
         <el-form-item label="注册资本">
-          <el-input v-model="form.registeredCapital" placeholder="如 500 万元人民币（仅企业适用）" />
+          <el-input
+            v-model="form.registeredCapital"
+            placeholder="如 500 万元人民币（仅企业适用）"
+          />
         </el-form-item>
         <el-form-item label="成立日期">
           <el-date-picker
@@ -129,6 +138,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import {
   createOrganization,
@@ -138,6 +148,8 @@ import {
   updateOrganization,
   type OrganizationItem,
 } from '@/api/party'
+
+const router = useRouter()
 
 const loading = ref(false)
 const list = ref<OrganizationItem[]>([])
@@ -255,7 +267,14 @@ async function handleDelete(row: OrganizationItem) {
   ElMessage.success('删除成功')
   await load()
 }
-</script>
+
+function openAccounts(row: OrganizationItem) {
+  router.push({ name: 'party-accounts', params: { partyId: row.id }, query: { partyName: row.name } })
+}
+
+function openQualifications(row: OrganizationItem) {
+  router.push({ name: 'party-qualifications', params: { partyId: row.id }, query: { partyName: row.name } })
+}</script>
 
 <style scoped>
 .toolbar {

@@ -92,3 +92,108 @@ export function updateOrganization(id: string, data: OrganizationParams) {
 export function deleteOrganization(id: string) {
   return request.delete<unknown, void>(`/party/organizations/${id}`)
 }
+
+// ---- 账户 ----
+
+export interface AccountItem {
+  id: string
+  partyId: string
+  accountName: string
+  accountNo: string
+  bankName?: string
+  bankBranch?: string
+  status: number
+  remark?: string
+  createdAt: string
+}
+
+export interface AccountParams {
+  accountName: string
+  accountNo: string
+  bankName?: string
+  bankBranch?: string
+  status?: number
+  remark?: string
+}
+
+export function listAccounts(partyId: string) {
+  return request.get<unknown, AccountItem[]>(`/party/${partyId}/accounts`)
+}
+
+export function createAccount(partyId: string, data: AccountParams) {
+  return request.post<unknown, string>(`/party/${partyId}/accounts`, data)
+}
+
+export function updateAccount(id: string, data: AccountParams) {
+  return request.put<unknown, void>(`/party/accounts/${id}`, data)
+}
+
+export function deleteAccount(id: string) {
+  return request.delete<unknown, void>(`/party/accounts/${id}`)
+}
+
+export function listBankNames() {
+  return request.get<unknown, string[]>(`/party/accounts/bank-names`)
+}
+
+// ---- 资质 ----
+
+export interface QualificationItem {
+  id: string
+  partyId: string
+  qualType: string
+  qualName: string
+  qualLevel?: string
+  qualNo?: string
+  issuingAuthority?: string
+  issueDate?: string
+  expiryDate?: string
+  fileId?: string
+  fileName?: string
+  fileContentType?: string
+  status: number
+  remark?: string
+  createdAt: string
+}
+
+export interface QualificationParams {
+  qualType: string
+  qualName: string
+  qualLevel?: string
+  qualNo?: string
+  issuingAuthority?: string
+  issueDate?: string
+  expiryDate?: string
+  status?: number
+  remark?: string
+}
+
+export function listQualifications(partyId: string) {
+  return request.get<unknown, QualificationItem[]>(`/party/${partyId}/qualifications`)
+}
+
+export function createQualification(partyId: string, data: QualificationParams) {
+  return request.post<unknown, string>(`/party/${partyId}/qualifications`, data)
+}
+
+export function updateQualification(id: string, data: QualificationParams) {
+  return request.put<unknown, void>(`/party/qualifications/${id}`, data)
+}
+
+export function deleteQualification(id: string) {
+  return request.delete<unknown, void>(`/party/qualifications/${id}`)
+}
+
+export function listQualTypes() {
+  return request.get<unknown, string[]>(`/party/qualifications/qual-types`)
+}
+
+export function listQualLevels() {
+  return request.get<unknown, string[]>(`/party/qualifications/qual-levels`)
+}
+
+export function uploadQualificationFile(id: string, file: File) {
+  const fd = new FormData()
+  fd.append('file', file)
+  return request.post<unknown, string>(`/party/qualifications/${id}/file`, fd)
+}
